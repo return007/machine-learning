@@ -9,6 +9,8 @@ from sklearn.neighbors import KNeighborsClassifier
 import csv
 
 from readcsv import getcsvdata
+import cPickle as pickle
+import os.path
 
 data = getcsvdata("train.csv")
 print "Data Load Success!!!"
@@ -30,8 +32,18 @@ print "Press Enter to continue : "
 raw_input()
 
 # Train the classifier
-clf = KNeighborsClassifier()
-clf.fit(feature_train, label_train)
+
+model_path = "./classifier.pkl"
+
+if not os.path.exists(model_path) :
+	clf = KNeighborsClassifier()
+	clf.fit(feature_train, label_train)
+	pickle.dump(clf, open(model_path, "wb"))
+else :
+	clf = pickle.load(open(model_path, "rb"))
+	printf("Loaded!!!\n")
+
+
 pred = clf.predict(feature_test)
 
 acc = accuracy_score(pred, label_test)
